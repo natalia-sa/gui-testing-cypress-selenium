@@ -29,6 +29,27 @@ describe('association types', () => {
   it('test case 3', () => {
     // Implement your test case 3 code here
   });
+  it('test case 4', () => {
+    // Implement your test case 3 code here
+  });
+  it('test case 5', () => {
+    // Implement your test case 3 code here
+  });
+  it('test case 6', () => {
+    // Implement your test case 3 code here
+  });
+  it('test case 7', () => {
+    // Implement your test case 3 code here
+  });
+  it('test case 8', () => {
+    // Implement your test case 3 code here
+  });
+  it('test case 9', () => {
+    // Implement your test case 3 code here
+  });
+  it('test case 10', () => {
+    // Implement your test case 3 code here
+  });
 
   // Implement the remaining test cases in a similar manner
 });
