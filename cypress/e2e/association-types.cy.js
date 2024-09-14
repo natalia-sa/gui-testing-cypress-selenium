@@ -30,16 +30,33 @@ describe('association types', () => {
     cy.contains('Cancel').click();
     cy.url().should('include', '/admin/product-association-types/');
   });
-  it('test case 3', () => {
-    // Implement your test case 3 code here
+  it('Checking confirmation message before deleting', () => {
+    cy.clickInFirst('a[href="/admin/product-association-types/"]');
+    cy.get('input.bulk-select-checkbox').check();
+    cy.get('button.ui.red.labeled.icon.button').first().click();;
+    cy.get('body').should('contain', 'Confirm your action');
   });
-  it('test case 4', () => {
-    // Implement your test case 3 code here
+  it('Create association without name', () => {
+    cy.clickInFirst('a[href="/admin/product-association-types/"]');
+    cy.get('a[href="/admin/product-association-types/new"]').click();
+    cy.get('[id="sylius_product_association_type_code"]').type('may-association');
+    cy.get('*[class^="ui labeled icon primary button"]').click();
+    cy.get('body').should('contain', 'Error');
   });
-  it('test case 5', () => {
-    // Implement your test case 3 code here
+  it('Create association without code', () => {
+    cy.clickInFirst('a[href="/admin/product-association-types/"]');
+    cy.get('a[href="/admin/product-association-types/new"]').click();
+    cy.get('[id="sylius_product_association_type_translations_en_US_name"]').type('may-code');
+    cy.get('*[class^="ui labeled icon primary button"]').click();
+    cy.get('body').should('contain', 'Error');
   });
-  it('test case 6', () => {
+  it('Clear filters', () => {
+    cy.clickInFirst('a[href="/admin/product-association-types/"]');
+    cy.get('[id="criteria_name_value"]').type('Similar');
+    cy.contains('a', 'Clear filters').click();
+    cy.get('[id="criteria_name_value"]').should('have.value', '');
+  });
+  it('Filters associations', () => {
     // Implement your test case 3 code here
   });
   it('test case 7', () => {
@@ -51,9 +68,5 @@ describe('association types', () => {
   it('test case 9', () => {
     // Implement your test case 3 code here
   });
-  it('test case 10', () => {
-    // Implement your test case 3 code here
-  });
 
-  // Implement the remaining test cases in a similar manner
 });
