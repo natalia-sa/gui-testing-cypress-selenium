@@ -6,7 +6,7 @@ describe('association types', () => {
     cy.get('.primary').click();
   });
   // Remove .only and implement others test cases!
-  it.only('edit name of similar products', () => {
+  it('edit name of similar products', () => {
     // Click in association types in side menu
     cy.clickInFirst('a[href="/admin/product-association-types/"]');
     // Type in value input to search for specify association type
@@ -23,8 +23,12 @@ describe('association types', () => {
     // Assert that association type name has been updated
     cy.get('body').should('contain', 'Product association type has been successfully updated.');
   });
-  it('test case 2', () => {
-    // Implement your test case 2 code here
+  it('Cancel association before creating it', () => {
+    cy.clickInFirst('a[href="/admin/product-association-types/"]');
+    cy.get('a[href="/admin/product-association-types/new"]').click();
+    cy.get('[id="sylius_product_association_type_code"]').type('may-association');
+    cy.contains('Cancel').click();
+    cy.url().should('include', '/admin/product-association-types/');
   });
   it('test case 3', () => {
     // Implement your test case 3 code here
