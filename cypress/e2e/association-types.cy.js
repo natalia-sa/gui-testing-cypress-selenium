@@ -56,17 +56,29 @@ describe('association types', () => {
     cy.contains('a', 'Clear filters').click();
     cy.get('[id="criteria_name_value"]').should('have.value', '');
   });
-  it('Filters associations', () => {
-    // Implement your test case 3 code here
+  it('Filter associations with association name that does not exist', () => {
+    cy.clickInFirst('a[href="/admin/product-association-types/"]');
+    cy.get('[id="criteria_name_value"]').type('nothing');
+    cy.get('*[class^="ui blue labeled icon button"]').click();
+    cy.get('body').should('contain', 'There are no results to display');
   });
-  it('test case 7', () => {
-    // Implement your test case 3 code here
+  it('Create association that already exists', () => {
+    cy.clickInFirst('a[href="/admin/product-association-types/"]');
+    cy.get('a[href="/admin/product-association-types/new"]').click();
+    cy.get('[id="sylius_product_association_type_code"]').type('similar_products');
+    cy.get('[id="sylius_product_association_type_translations_en_US_name"]').type('Real similar products');
+    cy.get('*[class^="ui labeled icon primary button"]').click();
+    cy.get('body').should('contain', 'The association type with given code already exists.');
   });
-  it('test case 8', () => {
-    // Implement your test case 3 code here
+  it('Filter with name in upper case', () => {
+    cy.clickInFirst('a[href="/admin/product-association-types/"]');
+    cy.get('[id="criteria_name_value"]').type('REAL');
+    cy.get('*[class^="ui blue labeled icon button"]').click();
+    cy.get('body').should('contain', 'Real similar products');
   });
-  it('test case 9', () => {
-    // Implement your test case 3 code here
+  it('Filter with not contains', () => {
+    cy.clickInFirst('a[href="/admin/product-association-types/"]');
+    cy.get('[id="criteria_code_type"]').select('Not contains');
   });
 
 });
