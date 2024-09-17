@@ -59,10 +59,48 @@ describe('association types', () => {
     const currentUrl = await driver.getCurrentUrl();
     assert(currentUrl.includes('/admin/product-association-types/'));
   });
-
-  it('test case 3', async () => {
-    // Implement your test case 3 code here
+  it('Checking confirmation message before deleting', async () => {
+    await driver.findElement(By.linkText('Association types')).click();
+    let checkbox = await driver.findElement(By.css('input.bulk-select-checkbox'));
+    let isChecked = await checkbox.isSelected();
+    if (!isChecked) {
+        await checkbox.click();
+    }
+    const buttons = await driver.findElements(By.css('button.ui.red.labeled.icon.button'));
+    await buttons[1].click();
+    const bodyText = await driver.findElement(By.css('body')).getText();
+    assert(bodyText.includes('Confirm your action'));
   });
+  it('Create association without name', async () => {
+    await driver.findElement(By.linkText('Association types')).click();
+    await driver.findElement(By.css('a[href="/admin/product-association-types/new"]')).click();
+    await driver.findElement(By.id('sylius_product_association_type_code')).sendKeys('may-association');
+    await driver.findElement(By.css('*[class^="ui labeled icon primary button"]')).click();
+    const bodyText = await driver.findElement(By.css('body')).getText();
+    assert(bodyText.includes('Error'));
+  });
+  // it('Create association without code', async () => {
+  //   await driver.findElement(By.linkText('Association types')).click();
 
-  // Implement the remaining test cases in a similar manner
+  // });
+  // it('Clear filters', async () => {
+  //   await driver.findElement(By.linkText('Association types')).click();
+
+  // });
+  // it('Filter associations with association name that does not exist', async () => {
+  //   await driver.findElement(By.linkText('Association types')).click();
+
+  // });
+  // it('Create association that already exists', async () => {
+  //   await driver.findElement(By.linkText('Association types')).click();
+
+  // });
+  // it('Filter with name in upper case', async () => {
+  //   await driver.findElement(By.linkText('Association types')).click();
+
+  // });
+  // it('Filter with not contains', async () => {
+  //   await driver.findElement(By.linkText('Association types')).click();
+
+  // });
 });

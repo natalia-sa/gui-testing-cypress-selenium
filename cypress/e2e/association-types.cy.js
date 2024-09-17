@@ -33,7 +33,7 @@ describe('association types', () => {
   it('Checking confirmation message before deleting', () => {
     cy.clickInFirst('a[href="/admin/product-association-types/"]');
     cy.get('input.bulk-select-checkbox').check();
-    cy.get('button.ui.red.labeled.icon.button').first().click();;
+    cy.get('button.ui.red.labeled.icon.button').first().click();
     cy.get('body').should('contain', 'Confirm your action');
   });
   it('Create association without name', () => {
