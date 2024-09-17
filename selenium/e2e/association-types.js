@@ -23,7 +23,7 @@ describe('association types', () => {
   });
 
   // Remove .only and implement others test cases!
-  it.only('edit name of similar products', async () => {
+  it('edit name of similar products', async () => {
     // Click in attributes in side menu
     await driver.findElement(By.linkText('Association types')).click();
 
@@ -51,8 +51,13 @@ describe('association types', () => {
     assert(bodyText.includes('Product association type has been successfully updated.'));
   });
 
-  it('test case 2', async () => {
-    // Implement your test case 2 code here
+  it('Cancel association before creating it', async () => {
+    await driver.findElement(By.linkText('Association types')).click();
+    await driver.findElement(By.css('a[href="/admin/product-association-types/new"]')).click();
+    await driver.findElement(By.id('sylius_product_association_type_code')).sendKeys('may-association');
+    await driver.findElement(By.linkText('Cancel')).click();
+    const currentUrl = await driver.getCurrentUrl();
+    assert(currentUrl.includes('/admin/product-association-types/'));
   });
 
   it('test case 3', async () => {
