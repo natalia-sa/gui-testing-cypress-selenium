@@ -47,7 +47,7 @@ describe('association types', () => {
     await driver.findElement(By.id('sylius_save_changes_button')).click();
 
     // Assert that association type name has been updated
-    const bodyText = await driver.findElement(By.tagName('body')).getText();
+    const bodyText = await driver.findElement(By.css('body')).getText();
     assert(bodyText.includes('Product association type has been successfully updated.'));
   });
 
@@ -79,22 +79,38 @@ describe('association types', () => {
     const bodyText = await driver.findElement(By.css('body')).getText();
     assert(bodyText.includes('Error'));
   });
-  // it('Create association without code', async () => {
-  //   await driver.findElement(By.linkText('Association types')).click();
-
-  // });
-  // it('Clear filters', async () => {
-  //   await driver.findElement(By.linkText('Association types')).click();
-
-  // });
-  // it('Filter associations with association name that does not exist', async () => {
-  //   await driver.findElement(By.linkText('Association types')).click();
-
-  // });
-  // it('Create association that already exists', async () => {
-  //   await driver.findElement(By.linkText('Association types')).click();
-
-  // });
+  it('Create association without code', async () => {
+    await driver.findElement(By.linkText('Association types')).click();
+    await driver.findElement(By.css('a[href="/admin/product-association-types/new"]')).click();
+    await driver.findElement(By.id('sylius_product_association_type_translations_en_US_name')).sendKeys('may-code');
+    await driver.findElement(By.css('*[class^="ui labeled icon primary button"]')).click();
+    const bodyText = await driver.findElement(By.css('body')).getText();
+    assert(bodyText.includes('Error'));
+  });
+  it('Clear filters', async () => {
+    await driver.findElement(By.linkText('Association types')).click();
+    await driver.findElement(By.id('criteria_name_value')).sendKeys('Similar');
+    await driver.findElement(By.linkText('Clear filters')).click();
+    let inputField = await driver.findElement(By.id('criteria_name_value'));
+    let value = await inputField.getAttribute('value');
+    assert.strictEqual(value, '');
+  });
+  it('Filter associations with association name that does not exist', async () => {
+    await driver.findElement(By.linkText('Association types')).click();
+    await driver.findElement(By.id('criteria_name_value')).sendKeys('nothing');
+    await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
+    const bodyText = await driver.findElement(By.css('body')).getText();
+    assert(bodyText.includes('There are no results to display'));
+  });
+  it('Create association that already exists', async () => {
+    await driver.findElement(By.linkText('Association types')).click();
+    await driver.findElement(By.css('a[href="/admin/product-association-types/new"]')).click();
+    await driver.findElement(By.id('sylius_product_association_type_code')).sendKeys('similar_products');
+    await driver.findElement(By.id('sylius_product_association_type_translations_en_US_name')).sendKeys('Real similar products');
+    await driver.findElement(By.css('*[class^="ui labeled icon primary button"]')).click();
+    const bodyText = await driver.findElement(By.css('body')).getText();
+    assert(bodyText.includes('The association type with given code already exists.'));
+  });
   // it('Filter with name in upper case', async () => {
   //   await driver.findElement(By.linkText('Association types')).click();
 
