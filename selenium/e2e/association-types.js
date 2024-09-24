@@ -1,4 +1,4 @@
-const { Builder, By, until } = require('selenium-webdriver');
+const { Builder, By, Select } = require('selenium-webdriver');
 const assert = require('assert');
 
 describe('association types', () => {
@@ -23,7 +23,7 @@ describe('association types', () => {
   });
 
   // Remove .only and implement others test cases!
-  it.only('edit name of similar products', async () => {
+  it('edit name of similar products', async () => {
     // Click in attributes in side menu
     await driver.findElement(By.linkText('Association types')).click();
 
@@ -47,17 +47,85 @@ describe('association types', () => {
     await driver.findElement(By.id('sylius_save_changes_button')).click();
 
     // Assert that association type name has been updated
-    const bodyText = await driver.findElement(By.tagName('body')).getText();
+    const bodyText = await driver.findElement(By.css('body')).getText();
     assert(bodyText.includes('Product association type has been successfully updated.'));
   });
 
-  it('test case 2', async () => {
-    // Implement your test case 2 code here
+  it('Cancel association before creating it', async () => {
+    await driver.findElement(By.linkText('Association types')).click();
+    await driver.findElement(By.css('a[href="/admin/product-association-types/new"]')).click();
+    await driver.findElement(By.id('sylius_product_association_type_code')).sendKeys('may-association');
+    await driver.findElement(By.linkText('Cancel')).click();
+    const currentUrl = await driver.getCurrentUrl();
+    assert(currentUrl.includes('/admin/product-association-types/'));
   });
-
-  it('test case 3', async () => {
-    // Implement your test case 3 code here
+  it('Checking confirmation message before deleting', async () => {
+    await driver.findElement(By.linkText('Association types')).click();
+    let checkbox = await driver.findElement(By.css('input.bulk-select-checkbox'));
+    let isChecked = await checkbox.isSelected();
+    if (!isChecked) {
+        await checkbox.click();
+    }
+    const buttons = await driver.findElements(By.css('button.ui.red.labeled.icon.button'));
+    await buttons[1].click();
+    const bodyText = await driver.findElement(By.css('body')).getText();
+    assert(bodyText.includes('Confirm your action'));
   });
-
-  // Implement the remaining test cases in a similar manner
+  it('Create association without name', async () => {
+    await driver.findElement(By.linkText('Association types')).click();
+    await driver.findElement(By.css('a[href="/admin/product-association-types/new"]')).click();
+    await driver.findElement(By.id('sylius_product_association_type_code')).sendKeys('may-association');
+    await driver.findElement(By.css('*[class^="ui labeled icon primary button"]')).click();
+    const bodyText = await driver.findElement(By.css('body')).getText();
+    assert(bodyText.includes('Error'));
+  });
+  it('Create association without code', async () => {
+    await driver.findElement(By.linkText('Association types')).click();
+    await driver.findElement(By.css('a[href="/admin/product-association-types/new"]')).click();
+    await driver.findElement(By.id('sylius_product_association_type_translations_en_US_name')).sendKeys('may-code');
+    await driver.findElement(By.css('*[class^="ui labeled icon primary button"]')).click();
+    const bodyText = await driver.findElement(By.css('body')).getText();
+    assert(bodyText.includes('Error'));
+  });
+  it('Clear filters', async () => {
+    await driver.findElement(By.linkText('Association types')).click();
+    await driver.findElement(By.id('criteria_name_value')).sendKeys('Similar');
+    await driver.findElement(By.linkText('Clear filters')).click();
+    let inputField = await driver.findElement(By.id('criteria_name_value'));
+    let value = await inputField.getAttribute('value');
+    assert.strictEqual(value, '');
+  });
+  it('Filter associations with association name that does not exist', async () => {
+    await driver.findElement(By.linkText('Association types')).click();
+    await driver.findElement(By.id('criteria_name_value')).sendKeys('nothing');
+    await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
+    const bodyText = await driver.findElement(By.css('body')).getText();
+    assert(bodyText.includes('There are no results to display'));
+  });
+  it('Create association that already exists', async () => {
+    await driver.findElement(By.linkText('Association types')).click();
+    await driver.findElement(By.css('a[href="/admin/product-association-types/new"]')).click();
+    await driver.findElement(By.id('sylius_product_association_type_code')).sendKeys('similar_products');
+    await driver.findElement(By.id('sylius_product_association_type_translations_en_US_name')).sendKeys('Real similar products');
+    await driver.findElement(By.css('*[class^="ui labeled icon primary button"]')).click();
+    const bodyText = await driver.findElement(By.css('body')).getText();
+    assert(bodyText.includes('The association type with given code already exists.'));
+  });
+  it('Filter with name in upper case', async () => {
+    await driver.findElement(By.linkText('Association types')).click();
+    await driver.findElement(By.id('criteria_name_value')).sendKeys('REAL');
+    await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
+    const bodyText = await driver.findElement(By.css('body')).getText();
+    assert(bodyText.includes('Real similar products'));
+  });
+  it('Filter with not contains', async () => {
+    await driver.findElement(By.linkText('Association types')).click();
+    let dropdown = await driver.findElement(By.id('criteria_code_type'));
+    let selectDropdown = new Select(dropdown);
+    await selectDropdown.selectByVisibleText('Not contains');
+    await driver.findElement(By.id('criteria_code_value')).sendKeys('similar');
+    await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
+    const bodyText = await driver.findElement(By.css('body')).getText();
+    assert(bodyText.includes('There are no results to display'));
+  });
 });
