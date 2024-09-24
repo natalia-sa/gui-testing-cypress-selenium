@@ -79,6 +79,9 @@ describe('association types', () => {
   it('Filter with not contains', () => {
     cy.clickInFirst('a[href="/admin/product-association-types/"]');
     cy.get('[id="criteria_code_type"]').select('Not contains');
+    cy.get('[id="criteria_code_value"]').type('similar');
+    cy.get('*[class^="ui blue labeled icon button"]').click();
+    cy.get('body').should('contain', 'There are no results to display');
   });
 
 });

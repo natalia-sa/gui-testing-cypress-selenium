@@ -1,4 +1,4 @@
-const { Builder, By, until } = require('selenium-webdriver');
+const { Builder, By, Select } = require('selenium-webdriver');
 const assert = require('assert');
 
 describe('association types', () => {
@@ -111,12 +111,21 @@ describe('association types', () => {
     const bodyText = await driver.findElement(By.css('body')).getText();
     assert(bodyText.includes('The association type with given code already exists.'));
   });
-  // it('Filter with name in upper case', async () => {
-  //   await driver.findElement(By.linkText('Association types')).click();
-
-  // });
-  // it('Filter with not contains', async () => {
-  //   await driver.findElement(By.linkText('Association types')).click();
-
-  // });
+  it('Filter with name in upper case', async () => {
+    await driver.findElement(By.linkText('Association types')).click();
+    await driver.findElement(By.id('criteria_name_value')).sendKeys('REAL');
+    await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
+    const bodyText = await driver.findElement(By.css('body')).getText();
+    assert(bodyText.includes('Real similar products'));
+  });
+  it('Filter with not contains', async () => {
+    await driver.findElement(By.linkText('Association types')).click();
+    let dropdown = await driver.findElement(By.id('criteria_code_type'));
+    let selectDropdown = new Select(dropdown);
+    await selectDropdown.selectByVisibleText('Not contains');
+    await driver.findElement(By.id('criteria_code_value')).sendKeys('similar');
+    await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
+    const bodyText = await driver.findElement(By.css('body')).getText();
+    assert(bodyText.includes('There are no results to display'));
+  });
 });
